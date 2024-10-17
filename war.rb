@@ -16,7 +16,7 @@ class Game
   attr_reader :num_players
 
   def initialize(num_players)
-    @num_players = num_players
+    @num_players = num_players # プレイヤー数を把握する
   end
 end
 
