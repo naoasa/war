@@ -4,19 +4,25 @@ require "debug"
 
 # プレイヤーの責務
 class Player
-  attr_reader :name
+  attr_reader :name, :cards
 
   def initialize(name)
     @name = name # プレイヤーは名前を持つ
+    @cards = [] # プレイヤーはカードの集まりを持つ
   end
 end
 
 # ゲーム進行の責務
 class Game
-  attr_reader :num_players
+  attr_reader :num_players, :player_names
 
   def initialize(num_players)
     @num_players = num_players # プレイヤー数を把握する
+    @player_names = [] # プレイヤー名を把握する
+  end
+
+  def add_player_name(name) # プレイヤー名を追加する
+      @player_names << Player.new(name) # Playerクラスのインスタンスに引数を渡し、配列に格納
   end
 end
 
@@ -88,6 +94,11 @@ end
 # 実行
 
 game = Game.new(2) # プレイヤー数は2人
+game.add_player_name("プレイヤー1") # プレイヤー1を生成
+game.add_player_name("プレイヤー2") # プレイヤー2を生成
+game.player_names.each do |name|
+  puts "プレイヤー名: #{name.name}"
+end
 cards = Cards.new # Cardsクラスのインスタンスを生成
 cards.create_cards # 52枚のカードを生成
 cards.all_cards.each do |card|
