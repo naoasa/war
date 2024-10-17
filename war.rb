@@ -4,7 +4,8 @@ require "debug"
 
 # プレイヤーの責務
 class Player
-  attr_reader :name, :cards
+  attr_reader :name
+  attr_accessor :cards
 
   def initialize(name)
     @name = name # プレイヤーは名前を持つ
@@ -23,6 +24,26 @@ class Game
 
   def add_player_name(name) # プレイヤー名を追加する
       @player_names << Player.new(name) # Playerクラスのインスタンスに引数を渡し、配列に格納
+  end
+
+  def deal_cards(cards) # プレイヤーにカードを配る
+    # puts cards.all_cards.length => 52
+    # puts cards.all_cards.length / @num_players => 26
+    cards_per_player = cards.all_cards.length / @num_players # 1人あたりのカード数
+    # カードをシャッフルする
+    cards.all_cards.shuffle! # 破壊的に配列の要素をシャッフル
+    # 1人あたりのカード数だけ、プレイヤーにカードを配布する
+    case @num_players
+    when 2 # プレイヤーが2人の場合
+      # 各プレイヤーを取得
+      player1 = @player_names[0]
+      player2 = @player_names[1]
+      # 各プレイヤーに持ちカードを分割して配る
+      player1.cards = cards.all_cards.slice(0, cards_per_player)
+      player2.cards = cards.all_cards.slice(cards_per_player, cards_per_player)
+    end
+
+    puts "カードが配られました。"
   end
 end
 
@@ -93,6 +114,7 @@ end
 
 # 実行
 
+puts "戦争を開始します。"
 game = Game.new(2) # プレイヤー数は2人
 game.add_player_name("プレイヤー1") # プレイヤー1を生成
 game.add_player_name("プレイヤー2") # プレイヤー2を生成
@@ -101,7 +123,8 @@ game.player_names.each do |name|
 end
 cards = Cards.new # Cardsクラスのインスタンスを生成
 cards.create_cards # 52枚のカードを生成
-cards.all_cards.each do |card|
-  puts "#{card.show_card(card)}は、絵柄が#{card.suit}で強さが#{card.num}のカードです"
-end
+# cards.all_cards.each do |card|
+#   puts "#{card.show_card(card)}は、絵柄が#{card.suit}で強さが#{card.num}のカードです"
+# end
+game.deal_cards(cards)
 # binding.b
