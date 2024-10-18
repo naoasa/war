@@ -5,17 +5,20 @@ require "debug"
 # プレイヤーの責務
 class Player
   attr_reader :name
-  attr_accessor :cards
+  attr_accessor :cards, :battle, :battles, :sub_cards
 
   def initialize(name)
     @name = name # プレイヤーは名前を持つ
-    @cards = [] # プレイヤーはカードの集まりを持つ
+    @cards = [] # プレイヤーは手札を持つ
+    @battle = nil # プレイヤーは対戦カードを持つ
+    @battles = [] # プレイヤーは対戦カードたちを持つ
+    @sub_cards = [] # プレイヤーは手元にサブカードを持つ
   end
 end
 
 # ゲーム進行の責務
 class Game
-  attr_reader :num_players, :player_names
+  attr_reader :num_players, :player_names, :player1, :player2
 
   def initialize(num_players)
     @num_players = num_players # プレイヤー数を把握する
@@ -36,14 +39,21 @@ class Game
     case @num_players
     when 2 # プレイヤーが2人の場合
       # 各プレイヤーを取得
-      player1 = @player_names[0]
-      player2 = @player_names[1]
+      @player1 = @player_names[0]
+      @player2 = @player_names[1]
       # 各プレイヤーに持ちカードを分割して配る
-      player1.cards = cards.all_cards.slice(0, cards_per_player)
-      player2.cards = cards.all_cards.slice(cards_per_player, cards_per_player)
+      @player1.cards = cards.all_cards.slice(0, cards_per_player)
+      @player2.cards = cards.all_cards.slice(cards_per_player, cards_per_player)
     end
 
     puts "カードが配られました。"
+  end
+
+  def war # 戦争ゲームを開始する
+    puts "戦争！"
+
+    # プレイヤー1の手札からカードを1枚引き、プレイヤー1のバトル場に移動させる
+    
   end
 end
 
@@ -128,3 +138,4 @@ cards.create_cards # 52枚のカードを生成
 # end
 game.deal_cards(cards)
 # binding.b
+game.war
