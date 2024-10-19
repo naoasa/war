@@ -1,7 +1,5 @@
 # frozen_string_literal :true
 
-require "debug"
-
 # プレイヤーの責務
 class Player
   attr_reader :name
@@ -68,7 +66,7 @@ class Game
 
       # 数字を比較して、大きい方が勝利
       if @player1.battle.num > @player2.battle.num
-        puts "#{@player1.name}が勝ちました。"
+        puts "#{@player1.name}が勝ちました。#{@player1.name}はカードを#{@player1.battles.length + @player2.battles.length}枚もらいました。"
         # 2プレイヤーのバトル場のカードを全てプレイヤー1のサブカードに移動させる
         @player1.sub_cards.concat(@player1.battles) # サブカード配列にバトル場配列を連結させる
         @player1.battles.clear # バトル場配列を空にする
@@ -76,7 +74,7 @@ class Game
         @player1.sub_cards.concat(@player2.battles) # サブカード配列にバトル場配列を連結させる
         @player2.battles.clear # バトル場配列を空にする
       elsif @player1.battle.num < @player2.battle.num
-        puts "#{@player2.name}が勝ちました。"
+        puts "#{@player2.name}が勝ちました。#{@player2.name}はカードを#{@player1.battles.length + @player2.battles.length}枚もらいました。"
         # 2プレイヤーのバトル場のカードを全てプレイヤー1のサブカードに移動させる
         @player2.sub_cards.concat(@player1.battles) # サブカード配列にバトル場配列を連結させる
         @player1.battles.clear # バトル場配列を空にする
@@ -90,11 +88,11 @@ class Game
       # 手札が空になった場合に手札を増やすメソッドを実行
       sub_cards_to_cards
 
-      puts "プレイヤー1: 手札#{@player1.cards.length}, サブカード#{@player1.sub_cards.length}, バトル場#{@player1.battles.length}"
-      puts "プレイヤー2: 手札#{@player2.cards.length}, サブカード#{@player2.sub_cards.length}, バトル場#{@player2.battles.length}"
-      puts "=" * 50
+      # puts "プレイヤー1: 手札#{@player1.cards.length}, サブカード#{@player1.sub_cards.length}, バトル場#{@player1.battles.length}"
+      # puts "プレイヤー2: 手札#{@player2.cards.length}, サブカード#{@player2.sub_cards.length}, バトル場#{@player2.battles.length}"
     end # while文のend
 
+    add_cards_before_result # 全てのサブカードを手札に移す
     show_result # 勝利を判定し、勝負の結果を出力する
   end # warメソッドのend
 
@@ -112,6 +110,13 @@ class Game
     end
   end
 
+  def add_cards_before_result # 結果発表前に、サブカードから手札にカードを移動させる
+    @player_names.each do |player|
+      player.cards.concat(player.sub_cards)
+      player.sub_cards.clear
+    end
+  end
+
   def show_result # 勝利を判定し、勝負の結果を出力する
     if @player1.cards.empty?
       loser = @player1
@@ -123,7 +128,7 @@ class Game
     sorted_players = @player_names.sort_by { |player| -player.cards.length } # 手札枚数の降順
 
     puts "#{loser.name}の手札がなくなりました。"
-    puts "#{@player1.name}の手札の枚数は#{@player1.cards.length}です。#{@player2.name}の手札の枚数は#{@player2.cards.length}です。"
+    puts "#{@player1.name}の手札の枚数は#{@player1.cards.length}枚です。#{@player2.name}の手札の枚数は#{@player2.cards.length}枚です。"
 
     rank1_player = sorted_players[0]
     rank2_player = sorted_players[1]
@@ -204,14 +209,7 @@ puts "戦争を開始します。"
 game = Game.new(2) # プレイヤー数は2人
 game.add_player_name("プレイヤー1") # プレイヤー1を生成
 game.add_player_name("プレイヤー2") # プレイヤー2を生成
-game.player_names.each do |name|
-  puts "プレイヤー名: #{name.name}"
-end
 cards = Cards.new # Cardsクラスのインスタンスを生成
 cards.create_cards # 52枚のカードを生成
-# cards.all_cards.each do |card|
-#   puts "#{card.show_card(card)}は、絵柄が#{card.suit}で強さが#{card.num}のカードです"
-# end
-game.deal_cards(cards)
-game.war
-# binding.b
+game.deal_cards(cards) # プレイヤーにカードを配る
+game.war # ゲームを開始
