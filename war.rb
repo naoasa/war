@@ -1,4 +1,4 @@
-# frozen_string_literal :true
+# frozen_string_literal: true
 
 # プレイヤーの責務
 class Player
@@ -24,7 +24,7 @@ class Game
   end
 
   def add_player_name(name) # プレイヤー名を追加する
-      @player_names << Player.new(name) # Playerクラスのインスタンスに引数を渡し、配列に格納
+    @player_names << Player.new(name) # Playerクラスのインスタンスに引数を渡し、配列に格納
   end
 
   def deal_cards(cards) # プレイヤーにカードを配る
