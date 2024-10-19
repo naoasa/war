@@ -94,6 +94,8 @@ class Game
       puts "プレイヤー2: 手札#{@player2.cards.length}, サブカード#{@player2.sub_cards.length}, バトル場#{@player2.battles.length}"
       puts "=" * 50
     end # while文のend
+
+    show_result # 勝利を判定し、勝負の結果を出力する
   end # warメソッドのend
 
   def sub_cards_to_cards # 手札が0になった場合、サブカードから手札にカードを移動させる
@@ -108,6 +110,26 @@ class Game
       @player2.cards.shuffle! # 手札を破壊的にシャッフルする
       @player2.sub_cards.clear # サブカード配列を空にする
     end
+  end
+
+  def show_result # 勝利を判定し、勝負の結果を出力する
+    if @player1.cards.empty?
+      loser = @player1
+    else
+      loser = @player2
+    end
+
+    # プレイヤーを手札の多い順に並べ替える
+    sorted_players = @player_names.sort_by { |player| -player.cards.length } # 手札枚数の降順
+
+    puts "#{loser.name}の手札がなくなりました。"
+    puts "#{@player1.name}の手札の枚数は#{@player1.cards.length}です。#{@player2.name}の手札の枚数は#{@player2.cards.length}です。"
+
+    rank1_player = sorted_players[0]
+    rank2_player = sorted_players[1]
+
+    puts "#{rank1_player.name}が1位、#{rank2_player.name}が2位です。"
+    puts "戦争を終了します。"
   end
 end
 
