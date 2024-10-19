@@ -50,27 +50,62 @@ class Game
   end
 
   def war # 戦争ゲームを開始する
-    puts "戦争！"
+    # 戦争の終了条件: 参加プレイヤーのいずれかの手札が0になる => いずれの手札も0ではない間(=true)繰り返す
+    while @player1.cards.any? && @player2.cards.any?
+      puts "戦争！"
 
-    # プレイヤー1の手札からカードを1枚引き、プレイヤー1のバトル場に移動させる
-    @player1.battles << @player1.cards.shift
-    @player1.battle = @player1.battles[0]
+      # プレイヤー1の手札からカードを1枚引き、プレイヤー1のバトル場に移動させる
+      @player1.battles << @player1.cards.shift
+      @player1.battle = @player1.battles[0]
 
-    # プレイヤー2の手札からカードを1枚引き、プレイヤー2のバトル場に移動させる
-    @player2.battles << @player2.cards.shift
-    @player2.battle = @player2.battles[0]
+      # プレイヤー2の手札からカードを1枚引き、プレイヤー2のバトル場に移動させる
+      @player2.battles << @player2.cards.shift
+      @player2.battle = @player2.battles[0]
 
-    # カード情報の出力
-    puts "#{@player1.name}のカードは#{@player1.battle.show_card}です。"
-    puts "#{@player2.name}のカードは#{@player2.battle.show_card}です。"
+      # カード情報の出力
+      puts "#{@player1.name}のカードは#{@player1.battle.show_card}です。"
+      puts "#{@player2.name}のカードは#{@player2.battle.show_card}です。"
 
-    # 数字を比較して、大きい方が勝利
-    if @player1.battle.num > @player2.battle.num
-      puts "#{@player1.name}が勝ちました。"
-    elsif @player1.battle.num < @player2.battle.num
-      puts "#{@player2.name}が勝ちました。"
-    else
-      puts "引き分けです。"
+      # 数字を比較して、大きい方が勝利
+      if @player1.battle.num > @player2.battle.num
+        puts "#{@player1.name}が勝ちました。"
+        # 2プレイヤーのバトル場のカードを全てプレイヤー1のサブカードに移動させる
+        @player1.sub_cards.concat(@player1.battles) # サブカード配列にバトル場配列を連結させる
+        @player1.battles.clear # バトル場配列を空にする
+
+        @player1.sub_cards.concat(@player2.battles) # サブカード配列にバトル場配列を連結させる
+        @player2.battles.clear # バトル場配列を空にする
+      elsif @player1.battle.num < @player2.battle.num
+        puts "#{@player2.name}が勝ちました。"
+        # 2プレイヤーのバトル場のカードを全てプレイヤー1のサブカードに移動させる
+        @player2.sub_cards.concat(@player1.battles) # サブカード配列にバトル場配列を連結させる
+        @player1.battles.clear # バトル場配列を空にする
+
+        @player2.sub_cards.concat(@player2.battles) # サブカード配列にバトル場配列を連結させる
+        @player2.battles.clear # バトル場配列を空にする
+      else
+        puts "引き分けです。"
+      end
+
+      # バトルカードをなしにする
+      @player1.battle = nil
+      @player2.battle = nil
+      # 手札が空になった場合に手札を増やすメソッドを実行
+      sub_cards_to_cards
+    end # while文のend
+  end # warメソッドのend
+
+  def sub_cards_to_cards # 手札が0になった場合、サブカードから手札にカードを移動させる
+    if @player1.cards.empty? # 手札が空の場合
+      @player1.cards.concat(@player1.sub_cards.shuffle)
+      @player1.cards.shuffle! # 手札を破壊的にシャッフルする
+      @player1.sub_cards.clear # サブカード配列を空にする
+    end
+
+    if @player2.cards.empty? # 手札が空の場合
+      @player2.cards.concat(@player2.sub_cards)
+      @player2.cards.shuffle! # 手札を破壊的にシャッフルする
+      @player2.sub_cards.clear # サブカード配列を空にする
     end
   end
 end
@@ -156,4 +191,4 @@ cards.create_cards # 52枚のカードを生成
 # end
 game.deal_cards(cards)
 game.war
-# binding.b
+binding.b
