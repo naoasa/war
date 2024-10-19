@@ -53,7 +53,25 @@ class Game
     puts "戦争！"
 
     # プレイヤー1の手札からカードを1枚引き、プレイヤー1のバトル場に移動させる
-    
+    @player1.battles << @player1.cards.shift
+    @player1.battle = @player1.battles[0]
+
+    # プレイヤー2の手札からカードを1枚引き、プレイヤー2のバトル場に移動させる
+    @player2.battles << @player2.cards.shift
+    @player2.battle = @player2.battles[0]
+
+    # カード情報の出力
+    puts "#{@player1.name}のカードは#{@player1.battle.show_card}です。"
+    puts "#{@player2.name}のカードは#{@player2.battle.show_card}です。"
+
+    # 数字を比較して、大きい方が勝利
+    if @player1.battle.num > @player2.battle.num
+      puts "#{@player1.name}が勝ちました。"
+    elsif @player1.battle.num < @player2.battle.num
+      puts "#{@player2.name}が勝ちました。"
+    else
+      puts "引き分けです。"
+    end
   end
 end
 
@@ -66,9 +84,9 @@ class Card
     @num = num # 数字を持つ
   end
 
-  def show_card(card) # カードの絵柄と数字を返す
+  def show_card # カードの絵柄と数字を返す
     # 絵柄
-    case card.suit
+    case @suit
     when "spade"
       suit = "スペード"
     when "diamond"
@@ -80,7 +98,7 @@ class Card
     end
 
     # 数字
-    case card.num
+    case @num
     when 11
       num = "J"
     when 12
@@ -90,7 +108,7 @@ class Card
     when 14
       num = "A"
     else
-      num = card.num
+      num = @num
     end
 
     # 返す文字列
@@ -137,5 +155,5 @@ cards.create_cards # 52枚のカードを生成
 #   puts "#{card.show_card(card)}は、絵柄が#{card.suit}で強さが#{card.num}のカードです"
 # end
 game.deal_cards(cards)
-# binding.b
 game.war
+# binding.b
