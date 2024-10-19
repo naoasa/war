@@ -55,12 +55,12 @@ class Game
       puts "戦争！"
 
       # プレイヤー1の手札からカードを1枚引き、プレイヤー1のバトル場に移動させる
-      @player1.battles << @player1.cards.shift
-      @player1.battle = @player1.battles[0]
+      @player1.battles << @player1.cards.shift # 手札の先頭の要素を抽出し、battlesの最後に要素を追加する
+      @player1.battle = @player1.battles.last
 
       # プレイヤー2の手札からカードを1枚引き、プレイヤー2のバトル場に移動させる
-      @player2.battles << @player2.cards.shift
-      @player2.battle = @player2.battles[0]
+      @player2.battles << @player2.cards.shift # 手札の先頭の要素を抽出し、battlesの最後に要素を追加する
+      @player2.battle = @player2.battles.last
 
       # カード情報の出力
       puts "#{@player1.name}のカードは#{@player1.battle.show_card}です。"
@@ -87,11 +87,12 @@ class Game
         puts "引き分けです。"
       end
 
-      # バトルカードをなしにする
-      @player1.battle = nil
-      @player2.battle = nil
       # 手札が空になった場合に手札を増やすメソッドを実行
       sub_cards_to_cards
+
+      puts "プレイヤー1: 手札#{@player1.cards.length}, サブカード#{@player1.sub_cards.length}, バトル場#{@player1.battles.length}"
+      puts "プレイヤー2: 手札#{@player2.cards.length}, サブカード#{@player2.sub_cards.length}, バトル場#{@player2.battles.length}"
+      puts "=" * 50
     end # while文のend
   end # warメソッドのend
 
@@ -191,4 +192,4 @@ cards.create_cards # 52枚のカードを生成
 # end
 game.deal_cards(cards)
 game.war
-binding.b
+# binding.b
